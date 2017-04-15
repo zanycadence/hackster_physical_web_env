@@ -6,13 +6,6 @@ const {width, height, scale} = Dimensions.get("window"),
     vmax = Math.max(vw, vh);
 
 export default StyleSheet.create({
-    "html": {
-        "background": "url(/relay-click/images/HAL9000.jpg) no-repeat center center fixed",
-        "WebkitBackgroundSize": "cover",
-        "MozBackgroundSize": "cover",
-        "OBackgroundSize": "cover",
-        "backgroundSize": "cover"
-    },
     "*": {
         "WebkitBoxSizing": "border-box",
         "MozBoxSizing": "border-box",
