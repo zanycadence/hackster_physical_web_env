@@ -1,15 +1,15 @@
 (function() {
   'use strict';
 
-  class RelayClick {
+  class Env {
 
     /**
      * customize your project here to reflect the uuid of your service and characteristics.
      */
     constructor() {
-        this.deviceName = 'relays';
-        this.serviceUUID = '917649a0-d98e-11e5-9eec-0002a5d5c51b';
-        this.characteristic1UUID = '917649a1-d98e-11e5-9eec-0002a5d5c51b';
+        this.deviceName = 'env_sensor';
+        this.serviceUUID = "19B10040-E8F2-537E-4F6C-D104768A1214";
+        this.characteristic1UUID = "19B10041-E8F2-537E-4F6C-D104768A1215";
         this.device = null;
         this.server = null;
         // The cache allows us to hold on to characeristics for access in response to user commands
@@ -62,6 +62,6 @@
  }
 }
 
-window.relayClick = new RelayClick();
+window.env = new Env();
 
 })();
