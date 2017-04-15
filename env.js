@@ -8,8 +8,12 @@
      */
     constructor() {
         this.deviceName = 'env_sensor';
-        this.serviceUUID = "19B10040-E8F2-537E-4F6C-D104768A1214";
-        this.characteristic1UUID = "19B10041-E8F2-537E-4F6C-D104768A1215";
+        this.serviceUUIDs = [
+          "00001234-0000-1000-8000-00805f9b34fb",
+          '00001234-0000-1000-8000-00805f9b34fd',
+          '00001234-0000-1000-8000-00805f9b3501'
+        ],
+        this.dustServiceUUID = "00001234-0000-1000-8000-00805f9b34fb";
         this.device = null;
         this.server = null;
         // The cache allows us to hold on to characeristics for access in response to user commands
@@ -18,9 +22,8 @@
 
     connect(){
         return navigator.bluetooth.requestDevice({
-         filters: [{
-          services:[this.serviceUUID]
-         }]
+         acceptAllDevices: true,
+         optionalServices: [this.serviceUUIDs[0], this.serviceUUIDs[1], this.serviceUUIDs[2] ]
         })
         .then(device => {
             this.device = device;
@@ -28,17 +31,49 @@
         })
         .then(server => {
             this.server = server;
-            return Promise.all([
-              server.getPrimaryService(this.serviceUUID)
-              .then(service=>{
-                return Promise.all([
-                  this._cacheCharacteristic(service, this.characteristic1UUID),
-                  // this._cacheCharacteristic(service, 'uuidCharacteristic2Here'),
-                ])
-              })
-            ]);
+            return server.getPrimaryServices();
         })
+        .then(services => {
+          let queue = Promise.resolve();
+          services.forEach(service => {
+            queue = queue.then(_ => service.getCharacteristics().then(characteristics => {
+              characteristics.forEach(characteristic => {
+                characteristic.startNotifications().then(_ => {
+                  console.log(characteristic.uuid);
+                  characteristic.addEventListener('characteristicvaluechanged', this.handleCharChange);
+                });
+        });
+      }));
+    });
+    return queue;
+  })
+  .catch(error => {
+    console.log(error);
+  })
+
     }
+
+  handleCharChange(event){
+    var elementId = event.target.uuid.substr(-2);
+    if ((elementId === 'fe')||(elementId === 'ff')){
+      document.getElementById(elementId).innerHTML = event.target.value.getUint32(0, true);
+      console.log("int change: " + event.target.value.getUint32(0, true));
+    } else {
+      document.getElementById(elementId).innerHTML = event.target.value.getFloat32(0,true).toFixed(2);
+      console.log("float change: " + event.target.value.getFloat32(0,true));
+    }
+
+
+  }
+  getSupportedProperties(characteristic) {
+  let supportedProperties = [];
+  for (const p in characteristic.properties) {
+    if (characteristic.properties[p] === true) {
+      supportedProperties.push(p.toUpperCase());
+    }
+  }
+  return '[' + supportedProperties.join(', ') + ']';
+}
 
   _cacheCharacteristic(service, characteristicUuid){
     return service.getCharacteristic(characteristicUuid)

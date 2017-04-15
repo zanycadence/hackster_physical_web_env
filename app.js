@@ -8,6 +8,6 @@ bleSwitch.addEventListener('click',function(){
   console.log('new switch click, connect');
   env.connect()
       .then(() => console.log('connected'))
-      .catch(error => { console.log('connect error!');
+      .catch(error => { console.log('connect error!: ' + error);
     });
 });
