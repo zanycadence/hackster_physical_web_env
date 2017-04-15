@@ -41,7 +41,7 @@ const int PIN_BLINK = 13;        // Pin 13 is the on-board LED
  * NOTE: This Sketch supports only lower-case URLs.
  * See initEddystoneUrlFrame().
  */
-const char* MY_URL = "https://goo.gl/jBcD3g";
+const char* MY_URL = "https://goo.gl/Z5hA1b";
 
 /*
  * The reported Tx Power value to put into the Eddystone-URL beacon frame.
